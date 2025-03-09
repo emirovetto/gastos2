@@ -1,101 +1,312 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+import { useState, useEffect } from "react"
+import { PlusCircle, Copy, Send } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { ExpenseChart } from "@/components/expense-chart"
+import { ExpenseList } from "@/components/expense-list"
+import { ExpenseSummary } from "@/components/expense-summary"
+import { cn } from "@/lib/utils"
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+// Define expense type
+type Expense = {
+  id: string
+  name: string
+  amount: number
+  description: string
 }
+
+export default function ExpenseCalculator() {
+  const [darkMode, setDarkMode] = useState(true)
+  const [name, setName] = useState("")
+  const [amount, setAmount] = useState("")
+  const [description, setDescription] = useState("")
+  const [expenses, setExpenses] = useState<Expense[]>([])
+  const [currency, setCurrency] = useState("ARS")
+  const [isAdding, setIsAdding] = useState(false)
+  const [totalPersons, setTotalPersons] = useState<number>(2)
+  const [participantNames, setParticipantNames] = useState<string[]>([])
+
+  // Apply dark mode
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark")
+    } else {
+      document.documentElement.classList.remove("dark")
+    }
+  }, [darkMode])
+
+  // Add new expense
+  const addExpense = () => {
+    if (!name) return
+
+    setIsAdding(true)
+
+    setTimeout(() => {
+      const newExpense: Expense = {
+        id: Date.now().toString(),
+        name,
+        amount: amount ? Number.parseFloat(amount) : 0,
+        description,
+      }
+
+      // Add participant name to the list if not already there
+      if (!participantNames.includes(name)) {
+        setParticipantNames([...participantNames, name])
+      }
+
+      setExpenses([...expenses, newExpense])
+      setName("")
+      setAmount("")
+      setDescription("")
+      setIsAdding(false)
+    }, 300)
+  }
+
+  // Delete expense
+  const deleteExpense = (id: string) => {
+    setExpenses(expenses.filter((expense) => expense.id !== id))
+  }
+
+  // Generate summary text for sharing
+  const generateSummaryText = () => {
+    const total = expenses.reduce((sum, expense) => sum + expense.amount, 0)
+
+    if (total === 0) return "No hay gastos registrados."
+
+    const personTotals: Record<string, { amount: number; descriptions: string[] }> = {}
+
+    // Initialize all participants with zero
+    participantNames.forEach((name) => {
+      personTotals[name] = { amount: 0, descriptions: [] }
+    })
+
+    expenses.forEach((expense) => {
+      if (!personTotals[expense.name]) {
+        personTotals[expense.name] = { amount: 0, descriptions: [] }
+      }
+      personTotals[expense.name].amount += expense.amount
+      if (expense.description) {
+        personTotals[expense.name].descriptions.push(expense.description)
+      }
+    })
+
+    const equalSplit = total / totalPersons
+
+    let summary = `¡Resumen de gastos!\n💰 Total: ${currency}${total.toFixed(2)}\n`
+    summary += `👥 Total personas: ${totalPersons}\n`
+    summary += `💸 Dividido en partes iguales: ${currency}${equalSplit.toFixed(2)} por persona\n\n`
+
+    Object.entries(personTotals).forEach(([person, data]) => {
+      const percentage = total > 0 ? ((data.amount / total) * 100).toFixed(0) : "0"
+      const descriptions = data.descriptions.length > 0 ? ` - "${data.descriptions.join(", ")}"` : ""
+      const balance = data.amount - equalSplit
+      const balanceText =
+        balance > 0
+          ? `debe recibir ${currency}${balance.toFixed(2)}`
+          : `debe pagar ${currency}${Math.abs(balance).toFixed(2)}`
+
+      summary += `👥 ${person}: ${currency}${data.amount.toFixed(2)} (${percentage}%)${descriptions}\n   ${balanceText}\n`
+    })
+
+    summary += "\ 4kdigitalsg.com.ar 🚀"
+
+    return summary
+  }
+
+  // Copy summary to clipboard
+  const copySummary = () => {
+    const summary = generateSummaryText()
+    navigator.clipboard
+      .writeText(summary)
+      .then(() => alert("Resumen copiado al portapapeles"))
+      .catch((err) => console.error("Error al copiar: ", err))
+  }
+
+  // Share via WhatsApp
+  const shareViaWhatsApp = () => {
+    const summary = encodeURIComponent(generateSummaryText())
+    window.open(`https://wa.me/?text=${summary}`, "_blank")
+  }
+
+  return (
+    <div
+      className={cn(
+        "min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-4 md:p-8",
+        "transition-all duration-300",
+      )}
+    >
+      <div className="max-w-4xl mx-auto">
+        <header className="text-center mb-8">
+          <img 
+            src="/4kdev.png"
+            alt="4kdev Logo"
+            className="mx-auto mb-4 w-24 h-auto"
+          />
+          <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 mb-2">
+            Calculadora de Gastos de Comida
+          </h1>
+          <p className="text-gray-400">Divide gastos fácilmente entre amigos</p>
+        </header>
+
+        <Card className="mb-6 bg-gray-800/50 border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-xl text-purple-400">Configuración</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="totalPersons" className="text-gray-300">
+                  Número total de personas
+                </Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="totalPersons"
+                    type="number"
+                    min="1"
+                    value={totalPersons}
+                    onChange={(e) => setTotalPersons(Math.max(1, Number.parseInt(e.target.value) || 1))}
+                    className="bg-gray-700 border-gray-600 text-white w-24"
+                  />
+                  <span className="text-gray-400">personas que participarán en la división de gastos</span>
+                </div>
+              </div>
+
+              {participantNames.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="text-gray-300">Participantes agregados</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {participantNames.map((name) => (
+                      <div key={name} className="px-3 py-1 bg-gray-700 rounded-full text-sm">
+                        {name}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Input Form */}
+          <Card className="bg-gray-800/50 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-xl text-purple-400">Agregar Gasto</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-gray-300">
+                    Nombre
+                  </Label>
+                  <Input
+                    id="name"
+                    placeholder="Ej: Emi"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="bg-gray-700 border-gray-600 text-white"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="amount" className="text-gray-300">
+                    Monto
+                  </Label>
+                  <div className="flex">
+                    <div className="flex items-center px-3 bg-gray-700 border border-r-0 border-gray-600 rounded-l-md">
+                      <select
+                        value={currency}
+                        onChange={(e) => setCurrency(e.target.value)}
+                        className="bg-transparent text-white outline-none"
+                      >
+                        <option value="ARS">ARS</option>
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                      </select>
+                    </div>
+                    <Input
+                      id="amount"
+                      type="number"
+                      step="0.01"
+                      placeholder="25.50"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      className="bg-gray-700 border-gray-600 text-white rounded-l-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description" className="text-gray-300">
+                    Descripción (opcional)
+                  </Label>
+                  <Input
+                    id="description"
+                    placeholder="Ej: Una coca bien fría!"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="bg-gray-700 border-gray-600 text-white"
+                  />
+                </div>
+
+                <Button
+                  onClick={addExpense}
+                  className={cn(
+                    "w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600",
+                    "transition-all duration-300 transform",
+                    isAdding ? "scale-95 opacity-80" : "",
+                  )}
+                >
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Agregar Gasto
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Summary and Chart */}
+          <div className="space-y-6">
+            <ExpenseSummary expenses={expenses} currency={currency} totalPersons={totalPersons} />
+            <ExpenseChart expenses={expenses} currency={currency} />
+          </div>
+        </div>
+
+        {/* Expense List */}
+        <ExpenseList expenses={expenses} currency={currency} onDelete={deleteExpense} />
+
+        {/* Share Options */}
+        {expenses.length > 0 && (
+          <Card className="mt-6 bg-gray-800/50 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-xl text-purple-400">Compartir Resumen</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="p-4 bg-gray-700/50 rounded-md mb-4 text-sm font-mono whitespace-pre-wrap">
+                {generateSummaryText()}
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Button
+                  onClick={copySummary}
+                  variant="outline"
+                  className="bg-gray-700 border-gray-600 hover:bg-gray-600 text-white"
+                >
+                  <Copy className="mr-2 h-4 w-4" />
+                  Copiar al portapapeles
+                </Button>
+                <Button onClick={shareViaWhatsApp} className="bg-green-600 hover:bg-green-700 text-white">
+                  <Send className="mr-2 h-4 w-4" />
+                  Compartir por WhatsApp
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </div>
+  )
+}
+
