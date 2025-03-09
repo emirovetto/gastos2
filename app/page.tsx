@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
+import Image from 'next/image'
 import { PlusCircle, Copy, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,7 +21,6 @@ type Expense = {
 }
 
 export default function ExpenseCalculator() {
-  const [darkMode, setDarkMode] = useState(true)
   const [name, setName] = useState("")
   const [amount, setAmount] = useState("")
   const [description, setDescription] = useState("")
@@ -30,14 +30,7 @@ export default function ExpenseCalculator() {
   const [totalPersons, setTotalPersons] = useState<number>(2)
   const [participantNames, setParticipantNames] = useState<string[]>([])
 
-  // Apply dark mode
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark")
-    } else {
-      document.documentElement.classList.remove("dark")
-    }
-  }, [darkMode])
+  // Remove darkMode useEffect
 
   // Add new expense
   const addExpense = () => {
@@ -141,10 +134,12 @@ export default function ExpenseCalculator() {
     >
       <div className="max-w-4xl mx-auto">
         <header className="text-center mb-8">
-          <img 
+          <Image 
             src="/4kdev.png"
             alt="4kdev Logo"
-            className="mx-auto mb-4 w-24 h-auto"
+            width={96}
+            height={96}
+            className="mx-auto mb-4"
           />
           <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 mb-2">
             Calculadora de Gastos de Comida
