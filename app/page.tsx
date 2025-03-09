@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Image from 'next/image'
-import { PlusCircle, Copy, Send } from "lucide-react"
+import { PlusCircle, Copy, Send, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -161,12 +161,11 @@ export default function ExpenseCalculator() {
                   <Input
                     id="totalPersons"
                     type="number"
-                    min="1"
                     value={totalPersons}
-                    onChange={(e) => setTotalPersons(Math.max(1, Number.parseInt(e.target.value) || 1))}
+                    onChange={(e) => setTotalPersons(Number.parseInt(e.target.value) || 0)}
                     className="bg-gray-700 border-gray-600 text-white w-24"
                   />
-                  <span className="text-gray-400">personas que participarán en la división de gastos</span>
+                  <span className="text-white">personas que participarán en la división de gastos</span>
                 </div>
               </div>
 
@@ -175,7 +174,7 @@ export default function ExpenseCalculator() {
                   <Label className="text-gray-300">Participantes agregados</Label>
                   <div className="flex flex-wrap gap-2">
                     {participantNames.map((name) => (
-                      <div key={name} className="px-3 py-1 bg-gray-700 rounded-full text-sm">
+                      <div key={name} className="px-3 py-1 bg-gray-700 rounded-full text-sm text-white">
                         {name}
                       </div>
                     ))}
@@ -275,31 +274,51 @@ export default function ExpenseCalculator() {
 
         {/* Share Options */}
         {expenses.length > 0 && (
-          <Card className="mt-6 bg-gray-800/50 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-xl text-purple-400">Compartir Resumen</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="p-4 bg-gray-700/50 rounded-md mb-4 text-sm font-mono whitespace-pre-wrap">
-                {generateSummaryText()}
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <Button
-                  onClick={copySummary}
-                  variant="outline"
-                  className="bg-gray-700 border-gray-600 hover:bg-gray-600 text-white"
-                >
-                  <Copy className="mr-2 h-4 w-4" />
-                  Copiar al portapapeles
-                </Button>
-                <Button onClick={shareViaWhatsApp} className="bg-green-600 hover:bg-green-700 text-white">
-                  <Send className="mr-2 h-4 w-4" />
-                  Compartir por WhatsApp
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <>
+            <Card className="mt-6 bg-gray-800/50 border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-xl text-purple-400">Compartir Resumen</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="p-4 bg-gray-700/50 rounded-md mb-4 text-sm font-mono whitespace-pre-wrap text-white">
+                  {generateSummaryText()}
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    onClick={copySummary}
+                    variant="outline"
+                    className="bg-gray-700 border-gray-600 hover:bg-gray-600 text-white"
+                  >
+                    <Copy className="mr-2 h-4 w-4" />
+                    Copiar al portapapeles
+                  </Button>
+                  <Button onClick={shareViaWhatsApp} className="bg-green-600 hover:bg-green-700 text-white">
+                    <Send className="mr-2 h-4 w-4" />
+                    Compartir por WhatsApp
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Reset Button */}
+            <Button
+              onClick={() => {
+                setExpenses([]);
+                setName("");
+                setAmount("");
+                setDescription("");
+                setParticipantNames([]);
+                setTotalPersons(2);
+                setCurrency("ARS");
+              }}
+              className="w-full mt-6 bg-red-600 hover:bg-red-700 text-white"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Reiniciar Todo
+            </Button>
+          </>
         )}
+
       </div>
     </div>
   )

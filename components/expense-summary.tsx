@@ -50,7 +50,7 @@ export function ExpenseSummary({ expenses, currency, totalPersons }: ExpenseSumm
       <CardContent>
         <div className="space-y-4">
           <div className="flex justify-between items-center pb-2 border-b border-gray-700">
-            <span className="text-gray-300">Total</span>
+            <span className="text-cyan-300">Total</span>
             <span className="text-xl font-bold text-white">
               {currency}
               {total.toFixed(2)}
@@ -60,8 +60,8 @@ export function ExpenseSummary({ expenses, currency, totalPersons }: ExpenseSumm
           {total > 0 && (
             <div className="flex justify-between items-center pb-2 border-b border-gray-700">
               <div>
-                <span className="text-gray-300">Dividido entre {totalPersons} personas</span>
-                <span className="text-xs text-gray-400 block">Monto por persona</span>
+                <span className="text-cyan-300">Dividido entre {totalPersons} personas</span>
+                <span className="text-xs text-cyan-400 block">Monto por persona</span>
               </div>
               <span className="font-medium text-white">
                 {currency}
@@ -80,17 +80,17 @@ export function ExpenseSummary({ expenses, currency, totalPersons }: ExpenseSumm
                 <div key={name} className="space-y-1">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white">
                         {name.charAt(0)}
                       </div>
-                      <span>{name}</span>
+                      <span className="text-white">{name}</span>
                     </div>
                     <div className="text-right">
-                      <div className="font-medium">
+                      <div className="font-medium text-white">
                         {currency}
                         {amount.toFixed(2)}
                       </div>
-                      <div className="text-sm text-gray-400">{percentage}% del total</div>
+                      <div className="text-sm text-cyan-400">{percentage}% del total</div>
                     </div>
                   </div>
 

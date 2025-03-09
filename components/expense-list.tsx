@@ -77,12 +77,12 @@ export function ExpenseList({ expenses, currency, onDelete }: ExpenseListProps) 
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-gray-800 rounded-full">{getIcon(expense.description)}</div>
                 <div>
-                  <div className="font-medium">{expense.name}</div>
-                  {expense.description && <div className="text-sm text-gray-400">{expense.description}</div>}
+                  <div className="font-medium text-white">{expense.name}</div>
+                  {expense.description && <div className="text-sm text-cyan-400">{expense.description}</div>}
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="font-medium text-right">
+                <div className="font-medium text-right text-white">
                   {currency}
                   {expense.amount.toFixed(2)}
                 </div>
