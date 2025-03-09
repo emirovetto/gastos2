@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Gastos entre Amigos - 4kDev",
-  description: "4kdigitalsg.com.ar",
+  description: "4kdigitalsg.com",
 };
 
 export default function RootLayout({

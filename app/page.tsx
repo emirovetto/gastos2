@@ -105,7 +105,7 @@ export default function ExpenseCalculator() {
       summary += `👥 ${person}: ${currency}${data.amount.toFixed(2)} (${percentage}%)${descriptions}\n   ${balanceText}\n`
     })
 
-    summary += "\ 4kdigitalsg.com.ar 🚀"
+    summary += "\ 4kdigitalsg.com 🚀"
 
     return summary
   }
